@@ -14,6 +14,9 @@ step_y = size_canvas_y // s_y # step by the vertical
 size_canvas_x = step_x * s_x
 size_canvas_y = step_y * s_y
 
+menu_x = 250
+
+
 
 
 def on_closing():
@@ -26,7 +29,7 @@ tk.protocol("WM_DELETE_WINDOW", on_closing)
 tk.title("Lode game")
 tk.resizable(0, 0)
 tk.wm_attributes("-topmost", 1)
-canvas = Canvas(tk, width=size_canvas_x, height=size_canvas_y, bd=0, highlightthickness=0)
+canvas = Canvas(tk, width=size_canvas_x+menu_x, height=size_canvas_y, bd=0, highlightthickness=0)
 canvas.create_rectangle(0, 0, size_canvas_x, size_canvas_y, fill="white")
 canvas.pack()
 tk.update()
@@ -39,10 +42,21 @@ def draw_table():
         canvas.create_line(0, step_y * i, size_canvas_x,  step_y * i)
         
 
-
-
-
 draw_table()
+
+
+def button_generate_ships():
+    pass
+
+def button_generate_map():
+    pass
+
+
+b0 = Button(tk, text="Generate locations for ships", command = button_generate_ships)
+b0.place(x = size_canvas_x+20, y = 30)
+
+b1 = Button(tk, text="Generate the map again!", command = button_generate_map)
+b1.place(x = size_canvas_x+20, y = 70)
 
 
 while app_running:
