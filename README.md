@@ -2,4 +2,4 @@
 
 
 ## First submission 
-add a map for the game and rendering it
+add demo buttons and a map for the game and rendering it
