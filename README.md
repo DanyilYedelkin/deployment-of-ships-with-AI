@@ -5,4 +5,4 @@
 add demo buttons and a map for the game and rendering it
 
 ## Second submission (dev. DY)
-change background colours and add the ability to use the mouse with the correct coordinates
+change background colors and add the ability to use the mouse with the correct coordinates
