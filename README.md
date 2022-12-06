@@ -9,3 +9,7 @@ change background colors and add the ability to use the mouse with the correct c
 
 ## 3rd submission (dev. DY)
 add logic map and random generation with restarting a map
+
+
+## 4th submission (dev. DY)
+change map (make it as in the example (always true)
