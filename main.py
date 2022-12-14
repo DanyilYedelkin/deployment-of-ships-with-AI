@@ -14,23 +14,18 @@ maps = np.zeros(10,Map)
 
 # 4x4
 maps [0] = Map([2,2,1],[1,2,0,2],[1,3,0,1])
-maps [1] = Map([3,2,1],[1,2,1,2],[0,3,0,3])
-maps [2] = Map([3,2,1],[3,0,2,1],[2,1,1,2])
 
 # not solvable
-maps [3] = Map([4,2,1],[4,1,1,1],[2,1,3,1])
+maps [1] = Map([4,2,1],[4,1,1,1],[2,1,3,1])
 
 # 5x5
-maps [4] = Map([3,3,2,1,1],[1,2,2,2,3],[3,0,3,0,4])
-maps [5] = Map([4,3,2,1,1],[2,1,4,0,4],[2,1,3,2,3])
+maps [2] = Map([3,3,2,1,1],[1,2,2,2,3],[3,0,3,0,4])
+maps [3] = Map([4,3,2,1,1],[2,1,4,0,4],[2,1,3,2,3])
 
-# 7x7
-#maps [6] = Map([4,3,2,2,1,1],[4,0,1,3,1,2,2],[0,5,1,1,3,1,2])
-#maps [7] = Map([5,3,3,2,2,1,1],[3,0,4,2,1,1,6],[3,2,3,1,4,2,2])
 
 # 10x10
-maps [6] = Map([3,3,3,3,2,2,1,1,1],[4,0,2,3,1,1,2,2,1,3],[0,5,2,1,2,4,1,1,1,2])
-maps [7] = Map([4,3,3,2,2,2,1,1,1,1],[6,1,2,1,0,2,3,0,1,4],[4,2,0,4,2,3,0,0,5,0])
+maps [4] = Map([3,3,3,3,2,2,1,1,1],[4,0,2,3,1,1,2,2,1,3],[0,5,2,1,2,4,1,1,1,2])
+maps [5] = Map([4,3,3,2,2,2,1,1,1,1],[6,1,2,1,0,2,3,0,1,4],[4,2,0,4,2,3,0,0,5,0])
 
 
 drawMapMenu()
@@ -111,16 +106,7 @@ while running:
                     screen.fill(BG_COLOR)
                     drawAlgoMenu()
                     refreshScreen()
-                if event.key == pg.K_6 or event.key == pg.K_KP6:
-                    board = maps[6]
-                    screen.fill(BG_COLOR)
-                    drawAlgoMenu()
-                    refreshScreen()
-                if event.key == pg.K_7 or event.key == pg.K_KP7:
-                    board = maps[7]
-                    screen.fill(BG_COLOR)
-                    drawAlgoMenu()
-                    refreshScreen()
+
             elif algo == 'none':
                 if event.key == pg.K_0 or event.key == pg.K_KP0:
                     algo = 'dfs'
@@ -129,3 +115,6 @@ while running:
                     screen.fill(BG_COLOR)
                     drawMapMenu()
                     refreshScreen()
+            
+            
+            
