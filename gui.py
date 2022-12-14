@@ -63,10 +63,10 @@ def drawMapMenu():
     screen.blit(textFont.render('in the battleship game.', False, TEXT_COLOR),(5*TILE_SIZE, 40))
     screen.blit(textFont.render('Press the Key to choose a map size:', False, TEXT_COLOR),(4*TILE_SIZE - 10, 100))
     
-    for i in range(8):
-        if i < 4:
+    for i in range(6):
+        if i < 2:
             size = '4x4'
-        elif i < 6:
+        elif i < 4:
             size = '5x5'
         else:
             size = '10x10'
