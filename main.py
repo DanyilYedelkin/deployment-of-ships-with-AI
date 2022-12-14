@@ -1,5 +1,3 @@
-
-    
 from gui import *
 from the_real_dfs import *
 from bck import *
@@ -69,7 +67,7 @@ while running:
             pg.quit()
         if event.type == pg.KEYDOWN:
             if result != None:
-                if event.key == pg.K_SPACE:
+                if event.key == pg.K_ESCAPE:
                     result = None
                     
                     screen.fill(BG_COLOR)
@@ -115,6 +113,3 @@ while running:
                     screen.fill(BG_COLOR)
                     drawMapMenu()
                     refreshScreen()
-            
-            
-            

@@ -80,47 +80,46 @@ def drawAlgoMenu():
 
 
 def drawResult(solved):
+    pg.draw.line(screen, BG_COLOR, (SCREEN_SIZE+5,400),(SCREEN_SIZE+600,400), 300)
+    
     if solved:
         text = 'SOLVED'
+        screen.blit(textFont.render(text, False, (0, 255, 0)),(SCREEN_SIZE + 40, 260))
     else:
         text = 'NOT SOLVED'
-    pg.draw.line(screen, BG_COLOR, (SCREEN_SIZE+5,400),(SCREEN_SIZE+600,400), 300)
-    screen.blit(textFont.render(text, False, TEXT_COLOR),(SCREEN_SIZE + 10, 260))
-    screen.blit(textFont.render('Press SPACE to return to menu', False, TEXT_COLOR),(SCREEN_SIZE + 10, 310))
+        screen.blit(textFont.render(text, False, (255, 0, 0)),(SCREEN_SIZE + 40, 260))
+    
+    screen.blit(textFont.render('Press ESC to return back to menu', False, TEXT_COLOR),(SCREEN_SIZE + 30, 310))
+    
     
 def drawDelay(value):
-    screen.blit(textFont.render('Delay: ' + str(value), False, TEXT_COLOR),(SCREEN_SIZE + 10, 210))
-    screen.blit(textFont.render('Press P to pause', False, TEXT_COLOR),(SCREEN_SIZE + 10, 260))
-    screen.blit(textFont.render('Press Q to quit', False, TEXT_COLOR),(SCREEN_SIZE + 10, 310))
+    screen.blit(textFont.render('Press Q to quit', False, TEXT_COLOR),(SCREEN_SIZE + 40, 310))
     
 def drawStats(explored, expanded, steps, time):
-    screen.blit(textFont.render('Expanded: ' + str(expanded), False, TEXT_COLOR),(SCREEN_SIZE + 10, 10))
-    screen.blit(textFont.render('Explored: ' + str(explored), False, TEXT_COLOR),(SCREEN_SIZE + 10, 60))
-    screen.blit(textFont.render('Steps: ' + str(steps), False, TEXT_COLOR),(SCREEN_SIZE + 10, 110))
-    screen.blit(textFont.render('Time: ' + str(round(time,2)), False, TEXT_COLOR),(SCREEN_SIZE + 10, 160))
+    screen.blit(textFont.render('Steps: ' + str(steps), False, TEXT_COLOR),(SCREEN_SIZE + 40, 20))
+    screen.blit(textFont.render('Time: ' + str(round(time,2)), False, TEXT_COLOR),(SCREEN_SIZE + 40, 70))
   
 def drawPause():
-    screen.blit(textFont.render('PAUSED', False, TEXT_COLOR),(SCREEN_SIZE + 10, 360))
+    screen.blit(textFont.render('PAUSED', False, TEXT_COLOR),(SCREEN_SIZE + 40, 360))
 
 
 
 # draw grid
 def drawGrid():
-    for lineIndex in range(TILES_COUNT):
+    for lineIndex in range(TILES_COUNT + 1):
         pos = lineIndex*TILE_SIZE
         boardSize = TILES_COUNT * TILE_SIZE
-        pg.draw.line(screen, LINE_COLOR, (0, pos), (boardSize, pos), 1)
-        pg.draw.line(screen, LINE_COLOR, (pos, 0), (pos, boardSize), 1)
+        pg.draw.line(screen, (255, 255, 255), (0, pos), (boardSize, pos), 1)
+        pg.draw.line(screen, (255, 255, 255), (pos, 0), (pos, boardSize), 1)
     
 # draw values
 def drawValues():
     for dimension in range(2):
         for lineIndex in range(TILES_COUNT):
-            #print(lineIndex, xValues, yValues)
             horizontal = dimension == 0
             value = xValues[lineIndex] if horizontal else yValues[lineIndex]
             xOffset = ONE_DIGIT_X_OFFSET if value < 10 else TWO_DIGIT_X_OFFSET
-            digitText = textFont.render(str(value), False, TEXT_COLOR)
+            digitText = textFont.render(str(value), False, (255, 255, 255))
             xPos = lineIndex*TILE_SIZE+xOffset if horizontal else BOARD_SIZE+xOffset
             yPos = BOARD_SIZE+TEXT_Y_OFFSET if horizontal else lineIndex*TILE_SIZE+TEXT_Y_OFFSET
             
