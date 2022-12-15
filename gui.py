@@ -38,7 +38,7 @@ def setBoardParams(rows, cols):
     global TILES_COUNT, BOARD_SIZE, SCREEN_SIZE, yValues, xValues, color_idx
     TILES_COUNT = len(rows)
     BOARD_SIZE = TILES_COUNT * TILE_SIZE
-    SCREEN_SIZE = BOARD_SIZE + NAV_SIZE
+    SCREEN_SIZE = BOARD_SIZE + NAV_SIZE + 200
     yValues = rows
     xValues = cols
     color_idx = 0
@@ -89,20 +89,16 @@ def drawResult(solved):
         text = 'NOT SOLVED'
         screen.blit(textFont.render(text, False, (255, 0, 0)),(SCREEN_SIZE + 40, 260))
     
-    screen.blit(textFont.render('Press ESC to return back to menu', False, TEXT_COLOR),(SCREEN_SIZE + 30, 310))
+    screen.blit(textFont.render('Press ESC to return back to menu', False, TEXT_COLOR),(SCREEN_SIZE - 170, 310))
     
     
 def drawDelay(value):
-    screen.blit(textFont.render('Press Q to quit', False, TEXT_COLOR),(SCREEN_SIZE + 40, 310))
+    screen.blit(textFont.render('Press ESC to return back to menu', False, TEXT_COLOR),(SCREEN_SIZE - 160, 310))
     
-def drawStats(explored, expanded, steps, time):
-    screen.blit(textFont.render('Steps: ' + str(steps), False, TEXT_COLOR),(SCREEN_SIZE + 40, 20))
-    screen.blit(textFont.render('Time: ' + str(round(time,2)), False, TEXT_COLOR),(SCREEN_SIZE + 40, 70))
+def drawStats(steps, time):
+    screen.blit(textFont.render('Steps: ' + str(steps), False, TEXT_COLOR),(SCREEN_SIZE - 160 , 20))
+    screen.blit(textFont.render('Time: ' + str(round(time,2)), False, TEXT_COLOR),(SCREEN_SIZE - 160, 70))
   
-def drawPause():
-    screen.blit(textFont.render('PAUSED', False, TEXT_COLOR),(SCREEN_SIZE + 40, 360))
-
-
 
 # draw grid
 def drawGrid():
@@ -196,7 +192,7 @@ def takeShot(x, y):
 
 #init screen
 pg.init()
-screen = pg.display.set_mode((SCREEN_SIZE + 400, SCREEN_SIZE))
+screen = pg.display.set_mode((SCREEN_SIZE + 500, SCREEN_SIZE))
 screen.fill(BG_COLOR)
 pg.display.update()
 textFont = pg.font.SysFont('Console', 30)
