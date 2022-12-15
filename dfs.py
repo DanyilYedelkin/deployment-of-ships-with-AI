@@ -14,7 +14,7 @@ class Lode:
 
 
 def setDfsParams(b,r,c):
-    global solved, error, lodes, row_rules, col_rules, field_len, field, lodes_len, lodes_info
+    global solved, error, lodes, row_rules, col_rules, field_len, field, lodes_len, lodes_position
     global steps, start
     solved = False
     error = False
@@ -24,18 +24,26 @@ def setDfsParams(b,r,c):
     field_len = len(row_rules)
     lodes_len = len(lodes)
     field = np.zeros((field_len,field_len),int)
-    lodes_info = np.zeros(lodes_len,Lode)
+    lodes_position = np.zeros(lodes_len,Lode)
     steps = 0
     start = time.time()
     setBoardParams(r, c)
 
+def checkHorizontal(lode, y, x):
+    tmp = x + lode
+    return True if field_len >= tmp else False
+
+def checkVertical(lode, y, x):
+    tmp = y + lode
+    return True if field_len >= tmp else False
+
 def setVisited(lode,y,x,state,idx):
-    global lodes_info
+    global lodes_position
     if state:
         field[y,x:x+lode] += 1
     else:
         field[y:y+lode,x] += 1
-    lodes_info[idx] = Lode(lode,y,x,state)
+    lodes_position[idx] = Lode(lode,y,x,state)
     
 def removeVisited(lode,y,x,state):
     if state:
@@ -44,21 +52,11 @@ def removeVisited(lode,y,x,state):
         field[y:y+lode,x] -= 1
 
 
-def checkHorizontal(lode, y, x):
-    if field_len >= x + lode:
-        return True
-    return False
-
-def checkVertical(lode, y, x):
-    if field_len >= y + lode:
-        return True
-    return False
-
 def drawLodes():
-    global lodes_info,  error,  steps, start
+    global lodes_position, error, steps, start
     idx = 0
     clearScreen()
-    for lode in lodes_info:
+    for lode in lodes_position:
         idx += 1
         length = lode.length
         y = lode.y
@@ -78,13 +76,13 @@ def drawLodes():
     for event in pg.event.get():
         if event.type == pg.KEYDOWN:
             if event.key == pg.K_ESCAPE:
-                error = True
+                error = True 
         if event.type == pg.QUIT:
             running = False
             pg.quit()
 
 def isSolved():
-    global field_len,  lodes_info
+    global field_len,  lodes_position
     if np.count_nonzero(field[:] > 1) > 0:
         return False
     for row in range(field_len):
@@ -94,10 +92,10 @@ def isSolved():
         if col_rules[col] != np.count_nonzero(field[:,col]):
             return False
     for idx in range(lodes_len):
-        length = lodes_info[idx].length
-        y = lodes_info[idx].y
-        x = lodes_info[idx].x
-        if lodes_info[idx].state:
+        length = lodes_position[idx].length
+        y = lodes_position[idx].y
+        x = lodes_position[idx].x
+        if lodes_position[idx].state:
             left = x - 1 if x > 0 else x
             right = x + length  if x + length < field_len else x + length -1
             # check if horizontal ship have neighbour
@@ -110,8 +108,12 @@ def isSolved():
             if right == x + length and field[y,right] > 0:
                 return False
         else:
-            top = y - 1 if y > 0 else y
-            bottom = y + length  if y + length < field_len else y + length -1
+            top = y - 1 
+            if top == -1:
+                top = 0
+            bottom = y + length 
+            if bottom == field_len:
+                bottom = field_len - 1
             # check if vertical ship have neighbour
             if x > 0 and np.count_nonzero(field[top:bottom,x-1]) > 0:
                 return False
@@ -128,7 +130,7 @@ def dfs(idx, y, x):
     global field_len, counter, solved, steps, start
     for row in range(field_len):
         for col in range(field_len):
-            if solved :
+            if solved:
                 return solved 
             if error:
                 return -1
@@ -149,7 +151,6 @@ def dfs(idx, y, x):
                     if isSolved():
                         solved = True
                         return solved
-                    explored += 1
                     removeVisited(lodes[idx], row, col, 0)
                 else:  
                     dfs(idx+1, 0, 0)
