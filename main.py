@@ -1,5 +1,5 @@
 from gui import *
-from the_real_dfs import *
+from dfs import *
 from bck import *
 
 class Map:
@@ -11,18 +11,18 @@ class Map:
 maps = np.zeros(10,Map)
 
 # 4x4
-maps [0] = Map([3,2,1],[3,0,2,1],[3,1,2,0])
+maps [0] = Map([2,2,1],[1,2,0,2],[1,3,0,1])
 
 # not solvable
 maps [1] = Map([4,2,1],[4,1,1,1],[2,1,3,1])
 
 # 5x5
-maps [2] = Map([4,3,2,1],[4,0,3,1,2],[1,4,1,3,1])
+maps [2] = Map([3,3,2,1,1],[1,2,2,2,3],[3,0,3,0,4])
 maps [3] = Map([4,3,2,1,1],[2,1,4,0,4],[2,1,3,2,3])
 
 
 # 10x10
-maps [4] = Map([4,3,3,2,2,2,1,1,1,1],[0,3,2,1,4,0,4,1,1,4],[0,5,3,1,2,4,2,1,2,0])
+maps [4] = Map([3,3,3,3,2,2,1,1,1],[4,0,2,3,1,1,2,2,1,3],[0,5,2,1,2,4,1,1,1,2])
 maps [5] = Map([4,3,3,2,2,2,1,1,1,1],[6,1,2,1,0,2,3,0,1,4],[4,2,0,4,2,3,0,0,5,0])
 
 
@@ -37,9 +37,6 @@ result = None
 
 delay = 21
 
-
-
-
 running = True
 while running:
     if board != None and algo != 'none' and result == None:
@@ -51,7 +48,7 @@ while running:
             result = dfs(0, 0, 0)
             board = None
             algo = 'none'
-            if result == 'interupt':
+            if result == -1:
                 result = None
                 screen.fill(BG_COLOR)
                 drawMapMenu()
