@@ -8,8 +8,6 @@ boats_removed = np.array([0])
 boats_removed = np.delete(boats_removed, 0)
 row_array = np.array([3, 0, 2, 2])
 col_array = np.array([3, 1, 2, 1])
-explored = 0
-expanded = 0
 steps = 0
 start = 0
 end = 0 
@@ -21,21 +19,21 @@ for boat in boats_array:
     if(boat > LEN):
         print("ERROR: length of the boat is more than size of the map")
 
-interupt = False
+error = False
 
-def setBckParams(b, r, c):
-    global row_array, col_array, boats_array_in, game_array, LEN, interupt
-    interupt = False
-    row_array = np.array(r)
-    col_array = np.array(c)
-    boats_array_in = np.array(b)
+def setBckParams(boats, rows, columns):
+    global row_array, col_array, boats_array_in, game_array, LEN, error
+    error = False
+    row_array = np.array(rows)
+    col_array = np.array(columns)
+    boats_array_in = np.array(boats)
     game_array = np.stack((row_array, col_array))
     LEN = len(game_array[0, :])
     retryData()
-    setBoardParams(r, c)
+    setBoardParams(rows, columns)
 
 def drawShips(array, x, y):
-    global interupt ,explored , expanded,steps,start,end
+    global error, steps, start, end
     ans = np.copy(array[1:LEN+1, 1:LEN+1])
     horizontal = False
 
@@ -69,15 +67,14 @@ def drawShips(array, x, y):
     for event in pg.event.get():
         if event.type == pg.KEYDOWN:
             if event.key == pg.K_ESCAPE:
-                interupt = True
+                error = True
         if event.type == pg.QUIT:
             running = False
             pg.quit()
 
 # function to test if boat can be at x,y possition horizontally
 def canPutHor(x, y, boat):
-    global game
-    global game_array
+    global game, game_array
     # can boat fit ?
     if(y-1+boat > LEN):
         return False
@@ -96,8 +93,7 @@ def canPutHor(x, y, boat):
 
 # function to test if boat can be at x,y possition vertically
 def canPutVer(x, y, boat):
-    global game
-    global game_array
+    global game, game_array
     # can boat fit ?
     if(x-1+boat > LEN):
         return False
@@ -114,16 +110,12 @@ def canPutVer(x, y, boat):
                 return False
     return True
 
-
-
-
 # test if game is solved
 def solved():
     global game_array
     if(np.all(game_array == 0)):
         return True
     return False
-
 
 # function that returns array of possible positions for boat
 def posPositions(boat):
@@ -136,12 +128,9 @@ def posPositions(boat):
                 posit.append([row+LEN, col])
     return posit
 
-
 def MRV(boats_array):
     boats_sorted = np.array(sorted(boats_array, reverse=True)).reshape(len(boats_array), 1)
-
     return [{'boat': int(boat), 'pos': posPositions(int(boat))} for boat in boats_sorted]
-
 
 def getLCV():
     global boats_array
@@ -151,11 +140,9 @@ def getLCV():
         out += len((index['pos']))
     return out
 
-
 # puts boat on board horizontally
 def putBoatHor(x, y, boat):
-    global game
-    global game_array
+    global game, game_array
     if(not canPutHor(x, y, boat)):
         return False
     game_array[0, x-1] -= boat
@@ -167,8 +154,7 @@ def putBoatHor(x, y, boat):
 
 
 def putBoatVer(x, y, boat):
-    global game
-    global game_array
+    global game, game_array
     if(not canPutVer(x, y, boat)):
         return False
     game_array[1, y-1] -= boat
@@ -188,13 +174,12 @@ def putBoat(x, y, boat):
 
 
 def boatBack(x, y):
-    global game
-    global game_array
+    global game, game_array
     boat = game[x, y] % LEN
     if(boat < 1):
-        return 0
+        return False
     if(boat == 1 and (game[x-1, y] > 0 or game[x+1, y] > 0 or game[x, y-1] > 0 or game[x, y+1] > 0)):
-        return 0
+        return False
     if(game[x, y] > LEN):
         for i in range(boat):
             game[x+i, y] = 0
@@ -210,8 +195,7 @@ def boatBack(x, y):
 
 # removes boat from list when its placed
 def removeBoat(boat):
-    global boats_array
-    global boats_removed
+    global boats_array, boats_removed
     for i in range(len(boats_array)):
         if(boats_array[i] == boat):
             boats_array = np.delete(boats_array, i)
@@ -221,8 +205,7 @@ def removeBoat(boat):
 
 # adding back boat to the boat_array
 def addBack(boat):
-    global boats_array
-    global boats_removed
+    global boats_array, boats_removed
     for i in range(len(boats_removed)):
         if(boats_removed[i] == boat):
             boats_removed = np.delete(boats_removed, i)
@@ -232,12 +215,11 @@ def addBack(boat):
 
 
 def tryPutBoat(x, y, boats_array):
-    global game
-    global game_array
+    global game, game_array
     for boat in boats_array:
         if(putBoatHor(x, y, boat) or putBoatVer(x, y, boat)):
             return removeBoat(boat)
-    return 0
+    return False
 
 
 def switchBoats():
@@ -247,10 +229,7 @@ def switchBoats():
 
 
 def retryData():
-    global game
-    global boats_array
-    global boats_removed
-    global game_array
+    global game, boats_array, boats_removed, game_array
     game_array = np.stack((row_array, col_array))
     game = np.zeros((len(game_array[0])+2, len(game_array[0])+2), int)
     boats_array = np.copy(boats_array_in)
@@ -268,15 +247,15 @@ def putBoatLCV(x, y, boat):
 
 
 def sortLCV(pos_boats_pos):
+    global game ,game_array, boats_array,boats_removed
     first = 0
     second = 0
-    global game ,game_array, boats_array,boats_removed
     dummy_game = np.copy(game) 
     dummy_game_array = np.copy(game_array)
     dummy_boats_array = np.copy(boats_array)
     dummy_boats_removed = np.copy(boats_removed)
     retryData()
-    #print("running")
+
     for index in pos_boats_pos:
         array = index['pos']
         boat = index['boat']
@@ -297,8 +276,6 @@ def sortLCV(pos_boats_pos):
     boats_removed = dummy_boats_removed
     return pos_boats_pos
 
-#print(LEN)
-
 
 cout = 0
 solved_game = np.copy(game)
@@ -306,13 +283,9 @@ last_solved = np.zeros((len(game_array[0])+2, len(game_array[0])+2), int)
 
 
 def bckAdvanced(index, pos_boats_pos):
-    global expanded,explored,steps
-    global solved_game
-
-    global last_solved
-    expanded+=1
-    if interupt:
-        return 'interupt'
+    global steps, solved_game, last_solved
+    if error:
+        return -1
     if(solved()):
         print("the task is solved")
         if(not np.array_equal(game, last_solved)):
@@ -321,13 +294,11 @@ def bckAdvanced(index, pos_boats_pos):
     if(index >= len(boats_array)):
         print("end of the boats")
         return solved()
-    if(len(boats_array)==1):
-        explored+=1
     a = index+1
     current_boat = pos_boats_pos[index]['boat']
     for pos in pos_boats_pos[index]['pos']:
-        if interupt:
-            return 'interupt'
+        if error:
+            return -1
         if(game[pos[0] % LEN, pos[1]] > 0): 
             continue
         drawShips(game, pos[1], pos[0] % LEN)
@@ -352,27 +323,24 @@ def bckAdvanced(index, pos_boats_pos):
 
 
 def backtrackMRV():
-    global expanded,explored,steps,start
+    global steps,start
     start = time.time()
-    expanded,explored,steps = 0,0,0
+    steps = 0
     return bckAdvanced(0, MRV(boats_array))
 
 def backtrackLCV():
-    global expanded,explored,steps,start
-    expanded,explored,steps = 0,0,0
+    global steps,start
+    steps = 0
     pos= sortLCV(MRV(boats_array))
     start = time.time()
     return bckAdvanced(0,pos )
 
 def frwMRV(index):
-    global expanded,explored,steps
-    global solved_game
-    global boats_array
+    global steps, last_solved, solved_game, boats_array
     pos_boats_pos = MRV(boats_array)
-    global last_solved
-    expanded+=1
-    if interupt:
-        return 'interupt'
+
+    if error:
+        return -1
     if(solved()):
         print("the task is solved")
         if(not np.array_equal(game, last_solved)):
@@ -382,12 +350,11 @@ def frwMRV(index):
     if(index >= len(boats_array)):
         print("end of the boats")
         return solved()
-    if(len(boats_array)==1):
-        explored+=1
+
     a = index+1
     for pos in pos_boats_pos[index]['pos']:
-        if interupt:
-            return 'interupt'
+        if error:
+            return -1
         current_boat = pos_boats_pos[index]['boat']
         steps+=1
         if(pos[0] > LEN):
@@ -410,14 +377,10 @@ def frwMRV(index):
     return solved()
 
 def frwLCV(index):
-    global expanded,explored,steps
-    global solved_game
-    global boats_array
-    expanded+=1
+    global steps, solved_game, boats_array, last_solved
     pos_boats_pos = sortLCV(MRV(boats_array))
-    global last_solved
-    if interupt:
-        return 'interupt'
+    if error:
+        return -1
     if(solved()):
         print("the task is solved")
         if(not np.array_equal(game, last_solved)):
@@ -427,12 +390,11 @@ def frwLCV(index):
     if(index >= len(boats_array)):
         print("end of the boats")
         return solved()
-    if(len(boats_array)==1):
-        explored+=1
+
     a = index+1
     for pos in pos_boats_pos[index]['pos']:
-        if interupt:
-            return 'interupt'
+        if error:
+            return -1
         current_boat = pos_boats_pos[index]['boat']
         if(pos[0] > LEN):
             if(putBoatVer(pos[0]-LEN, pos[1], current_boat)):
@@ -454,13 +416,13 @@ def frwLCV(index):
     return solved()
                 
 def forwardMRV():
-   global expanded,explored,steps,start
+   global steps,start
    start = time.time()
-   expanded,explored,steps = 0,0,0
+   steps = 0
    return frwMRV(0)
 
 def forwardLCV():
-    global expanded,explored,steps,start
+    global steps,start
     start = time.time()
-    expanded,explored,steps = 0,0,0
+    steps = 0
     return frwLCV(0)
