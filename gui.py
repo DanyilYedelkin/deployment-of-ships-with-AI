@@ -29,7 +29,6 @@ TEXT_COLOR = (231,65,255)
 SHIP_COLOR = (255,102,255)
 
 color_idx = 0
-# reading from file
 yValues = []
 xValues = []
 
@@ -47,16 +46,6 @@ def setColorIdx(idx):
     global color_idx
     color_idx = idx
 
-array = np.array([[0,0,0,0,0,0,0,0,0,0],
-         [0,0,0,0,0,0,0,0,0,0],
-         [0,0,1,1,0,0,0,0,0,0],
-         [0,0,0,1,0,0,0,0,0,0],
-         [0,0,0,1,0,0,0,0,0,0],
-         [0,0,0,0,0,0,0,0,0,0],
-         [0,0,0,0,0,0,0,0,0,0],
-         [0,0,0,0,0,0,0,0,0,0],
-         [0,0,0,0,0,0,0,0,0,0],
-         [0,0,0,0,0,0,0,0,0,0]])
 
 def drawMapMenu():
     screen.blit(textFont.render('Welcome to the ship deployment simulation', False, TEXT_COLOR),(2*TILE_SIZE + 20, 10))
@@ -127,7 +116,7 @@ def drawValues():
             xPos = lineIndex*TILE_SIZE+xOffset if horizontal else BOARD_SIZE+xOffset
             yPos = BOARD_SIZE+TEXT_Y_OFFSET if horizontal else lineIndex*TILE_SIZE+TEXT_Y_OFFSET
             
-            screen.blit(digitText,(xPos, yPos))
+            screen.blit(digitText, (xPos, yPos))
      
 # draw ship longer than 1x1
 def drawShip(start, end, line, horizontal):
@@ -153,7 +142,6 @@ def drawShip(start, end, line, horizontal):
     
 def draw1x1Ship(x, y):
     pos = (x*TILE_SIZE+OFFSET+1, y*TILE_SIZE+OFFSET+1)
-    
     pg.draw.circle(screen, COLORS[color_idx], pos, CIRCLE_WIDTH)
     
 def refreshScreen():
@@ -164,34 +152,6 @@ def clearScreen():
     drawGrid()
     drawValues()
 
-def readValues(string: str):
-    values = pd.read_csv(string+'/inputs.txt')
-    xValues = np.array(values["columns"])
-    yValues = np.array(values["rows"])
-    return (xValues,yValues)
-
-def drawSolution(array):
-    ans = array
-    horizontal= False
-    for i in range(1,len(array)-1):
-        for j in range(1,len(array)-1):
-            lenght = 1
-            if(ans[i,j]==1):
-                if(i+1<TILES_COUNT and ans[i+1,j]==1):
-                    horizontal=False
-                    while( i+lenght<TILES_COUNT and ans[i+lenght,j]==1 ):
-                        ans[i+lenght,j]=2
-                        lenght+=1
-                    drawShip(i, i+lenght-1, j, horizontal)   
-                elif(j+1<TILES_COUNT and ans[i,j+1]==1):
-                    horizontal=True
-                    while(j+lenght<TILES_COUNT and ans[i,j+lenght]==1):
-                        ans[i,j+lenght]=2
-                        lenght+=1
-                    drawShip(j, j+lenght-1, i, horizontal)
-                else :
-                    draw1x1Ship(i, j)
-                    ans[i,j]=2
                     
 def takeShot(x, y):
     pos = (x*TILE_SIZE+OFFSET+1, y*TILE_SIZE+OFFSET+1)
@@ -204,5 +164,3 @@ screen = pg.display.set_mode((SCREEN_SIZE + 400, SCREEN_SIZE))
 screen.fill(BG_COLOR)
 pg.display.update()
 textFont = pg.font.SysFont('consolas', 30)
-
-

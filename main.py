@@ -3,13 +3,16 @@ from dfs import *
 from bck import *
 
 class Map:
-    def __init__(self, b,r,c):
-        self.b = b
-        self.r = r
-        self.c = c
-        
-maps = np.zeros(10,Map)
+    def __init__(self, boats, rows, columns):
+        self.boats = boats
+        self.rows = rows
+        self.columns = columns
 
+# fill 0 in each map's point
+maps = np.zeros(10, Map)
+
+
+# Create game maps with different sizes 
 # 4x4
 maps [0] = Map([3,2,1],[3,0,2,1],[3,1,2,0])
 
@@ -26,27 +29,26 @@ maps [4] = Map([4,3,3,2,2,2,1,1,1,1],[0,3,2,1,4,0,4,1,1,4],[0,5,3,1,2,4,2,1,2,0]
 maps [5] = Map([4,3,3,2,2,2,1,1,1,1],[6,1,2,1,0,2,3,0,1,4],[4,2,0,4,2,3,0,0,5,0])
 
 
-
-
+# create and draw game map from GUI file
 drawMapMenu()
 refreshScreen()
 
-algo = 'none'
-board = None
+# set default parameters
+algorithm = 'none'
+map_board = None
 result = None
-
-
 running = True
+
 while running:
-    if board != None and algo != 'none' and result == None:
-        b = board.b
-        r = board.r
-        c = board.c
-        if algo == 'dfs':
-            setDfsParams(b,r,c)
+    if map_board != None and algorithm != 'none' and result == None:
+        boats = map_board.boats
+        rows = map_board.rows
+        columns = map_board.columns
+        if algorithm == 'dfs':
+            setDfsParams(boats, rows, columns)
             result = dfs(0, 0, 0)
-            board = None
-            algo = 'none'
+            map_board = None
+            algorithm = 'none'
             if result == -1:
                 result = None
                 screen.fill(BG_COLOR)
@@ -55,12 +57,12 @@ while running:
             else:
                 drawResult(result)
                 refreshScreen()
-        if algo == 'btMRV':
-            setBckParams(b, r, c)
+        if algorithm == 'btMRV':
+            setBckParams(boats, rows, columns)
             result = backtrackMRV()
-            board = None
-            algo = 'none'
-            if result == 'interupt':
+            map_board = None
+            algorithm = 'none'
+            if result == -1:
                 result = None
                 screen.fill(BG_COLOR)
                 drawMapMenu()
@@ -68,12 +70,12 @@ while running:
             else:  
                 drawResult(result)
                 refreshScreen()
-        if algo == 'btLCV':
-            setBckParams(b, r, c)
+        if algorithm == 'btLCV':
+            setBckParams(boats, rows, columns)
             result = backtrackLCV()
-            board = None
-            algo = 'none'
-            if result == 'interupt':
+            map_board = None
+            algorithm = 'none'
+            if result == -1:
                 result = None
                 screen.fill(BG_COLOR)
                 drawMapMenu()
@@ -81,12 +83,12 @@ while running:
             else:  
                 drawResult(result)
                 refreshScreen()
-        if algo == 'fcMRV':
-            setBckParams(b, r, c)
+        if algorithm == 'fcMRV':
+            setBckParams(boats, rows, columns)
             result = forwardMRV()
-            board = None
-            algo = 'none'
-            if result == 'interupt':
+            map_board = None
+            algorithm = 'none'
+            if result == -1:
                 result = None
                 screen.fill(BG_COLOR)
                 drawMapMenu()
@@ -94,12 +96,12 @@ while running:
             else:  
                 drawResult(result)
                 refreshScreen()
-        if algo == 'fcLCV':
-            setBckParams(b, r, c)
+        if algorithm == 'fcLCV':
+            setBckParams(boats, rows, columns)
             result = forwardLCV()
-            board = None
-            algo = 'none'
-            if result == 'interupt':
+            map_board = None
+            algorithm = 'none'
+            if result == -1:
                 result = None
                 screen.fill(BG_COLOR)
                 drawMapMenu()
@@ -120,51 +122,51 @@ while running:
                     screen.fill(BG_COLOR)
                     drawMapMenu()
                     refreshScreen()
-            elif board == None:
+            elif map_board == None:
                 if event.key == pg.K_0 or event.key == pg.K_KP0:
-                    board = maps[0]
+                    map_board = maps[0]
                     screen.fill(BG_COLOR)
                     drawAlgoMenu()
                     refreshScreen()
                 if event.key == pg.K_1 or event.key == pg.K_KP1:
-                    board = maps[1]
+                    map_board = maps[1]
                     screen.fill(BG_COLOR)
                     drawAlgoMenu()
                     refreshScreen()
                 if event.key == pg.K_2 or event.key == pg.K_KP2:
-                    board = maps[2]
+                    map_board = maps[2]
                     screen.fill(BG_COLOR)
                     drawAlgoMenu()
                     refreshScreen()
                 if event.key == pg.K_3 or event.key == pg.K_KP3:
-                    board = maps[3]
+                    map_board = maps[3]
                     screen.fill(BG_COLOR)
                     drawAlgoMenu()
                     refreshScreen()
                 if event.key == pg.K_4 or event.key == pg.K_KP4:
-                    board = maps[4]
+                    map_board = maps[4]
                     screen.fill(BG_COLOR)
                     drawAlgoMenu()
                     refreshScreen()
                 if event.key == pg.K_5 or event.key == pg.K_KP5:
-                    board = maps[5]
+                    map_board = maps[5]
                     screen.fill(BG_COLOR)
                     drawAlgoMenu()
                     refreshScreen()
 
-            elif algo == 'none':
+            elif algorithm == 'none':
                 if event.key == pg.K_0 or event.key == pg.K_KP0:
-                    algo = 'dfs'
+                    algorithm = 'dfs'
                 if event.key == pg.K_1 or event.key == pg.K_KP1:
-                    algo = 'btMRV'
+                    algorithm = 'btMRV'
                 if event.key == pg.K_2 or event.key == pg.K_KP2:
-                    algo = 'btLCV'
+                    algorithm = 'btLCV'
                 if event.key == pg.K_3 or event.key == pg.K_KP3:
-                    algo = 'fcMRV'
+                    algorithm = 'fcMRV'
                 if event.key == pg.K_4 or event.key == pg.K_KP4:
-                    algo = 'fcLCV'
+                    algorithm = 'fcLCV'
                 if event.key == pg.K_BACKSPACE:
-                    board = None
+                    map_board = None
                     screen.fill(BG_COLOR)
                     drawMapMenu()
                     refreshScreen()
