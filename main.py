@@ -32,12 +32,9 @@ drawMapMenu()
 refreshScreen()
 
 algo = 'none'
-
 board = None
-
 result = None
 
-delay = 21
 
 running = True
 while running:
@@ -58,7 +55,58 @@ while running:
             else:
                 drawResult(result)
                 refreshScreen()
-
+        if algo == 'btMRV':
+            setBckParams(b, r, c)
+            result = backtrackMRV()
+            board = None
+            algo = 'none'
+            if result == 'interupt':
+                result = None
+                screen.fill(BG_COLOR)
+                drawMapMenu()
+                refreshScreen()
+            else:  
+                drawResult(result)
+                refreshScreen()
+        if algo == 'btLCV':
+            setBckParams(b, r, c)
+            result = backtrackLCV()
+            board = None
+            algo = 'none'
+            if result == 'interupt':
+                result = None
+                screen.fill(BG_COLOR)
+                drawMapMenu()
+                refreshScreen()
+            else:  
+                drawResult(result)
+                refreshScreen()
+        if algo == 'fcMRV':
+            setBckParams(b, r, c)
+            result = forwardMRV()
+            board = None
+            algo = 'none'
+            if result == 'interupt':
+                result = None
+                screen.fill(BG_COLOR)
+                drawMapMenu()
+                refreshScreen()
+            else:  
+                drawResult(result)
+                refreshScreen()
+        if algo == 'fcLCV':
+            setBckParams(b, r, c)
+            result = forwardLCV()
+            board = None
+            algo = 'none'
+            if result == 'interupt':
+                result = None
+                screen.fill(BG_COLOR)
+                drawMapMenu()
+                refreshScreen()
+            else:  
+                drawResult(result)
+                refreshScreen()
         
     for event in pg.event.get():
         if event.type == pg.QUIT:
@@ -107,6 +155,14 @@ while running:
             elif algo == 'none':
                 if event.key == pg.K_0 or event.key == pg.K_KP0:
                     algo = 'dfs'
+                if event.key == pg.K_1 or event.key == pg.K_KP1:
+                    algo = 'btMRV'
+                if event.key == pg.K_2 or event.key == pg.K_KP2:
+                    algo = 'btLCV'
+                if event.key == pg.K_3 or event.key == pg.K_KP3:
+                    algo = 'fcMRV'
+                if event.key == pg.K_4 or event.key == pg.K_KP4:
+                    algo = 'fcLCV'
                 if event.key == pg.K_BACKSPACE:
                     board = None
                     screen.fill(BG_COLOR)

@@ -77,6 +77,10 @@ def drawAlgoMenu():
     screen.blit(textFont.render('Press the Key:', False, TEXT_COLOR),(6*TILE_SIZE + 10, TILE_SIZE))
     screen.blit(textFont.render('to select the algorithm', False, TEXT_COLOR),(5*TILE_SIZE - 10, TILE_SIZE + 40))
     screen.blit(textFont.render('0 - DFS', False, TEXT_COLOR),(TILE_SIZE, TILE_SIZE*2 + 40))
+    screen.blit(textFont.render('1 - Backtracking MRV', False, TEXT_COLOR),(TILE_SIZE, TILE_SIZE*3 + 40))
+    screen.blit(textFont.render('2 - Backtracking LCV', False, TEXT_COLOR),(TILE_SIZE, TILE_SIZE*4 + 40))
+    screen.blit(textFont.render('3 - Forward checking MRV', False, TEXT_COLOR),(TILE_SIZE, TILE_SIZE*5 + 40))
+    screen.blit(textFont.render('4 - Forward checking LCV', False, TEXT_COLOR),(TILE_SIZE, TILE_SIZE*6 + 40))
 
 
 def drawResult(solved):
