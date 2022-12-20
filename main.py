@@ -55,7 +55,7 @@ while running:
                 drawResult(result)
                 refreshScreen()
         if algorithm == 'btMRV':
-            setBckParams(boats, rows, columns)
+            setBacktrackingParams(boats, rows, columns)
             result = backtrackMRV()
             map_board = None
             algorithm = 'none'
@@ -68,7 +68,7 @@ while running:
                 drawResult(result)
                 refreshScreen()
         if algorithm == 'btLCV':
-            setBckParams(boats, rows, columns)
+            setBacktrackingParams(boats, rows, columns)
             result = backtrackLCV()
             map_board = None
             algorithm = 'none'
@@ -81,7 +81,7 @@ while running:
                 drawResult(result)
                 refreshScreen()
         if algorithm == 'fcMRV':
-            setBckParams(boats, rows, columns)
+            setBacktrackingParams(boats, rows, columns)
             result = forwardMRV()
             map_board = None
             algorithm = 'none'
@@ -94,7 +94,7 @@ while running:
                 drawResult(result)
                 refreshScreen()
         if algorithm == 'fcLCV':
-            setBckParams(boats, rows, columns)
+            setBacktrackingParams(boats, rows, columns)
             result = forwardLCV()
             map_board = None
             algorithm = 'none'

@@ -4,8 +4,6 @@ import numpy as np
 import time 
 
 TILES_COUNT = 10
-
-# dimensions
 NAV_SIZE = 60
 TILE_SIZE = 60 
 BOARD_SIZE = TILES_COUNT * TILE_SIZE
@@ -13,14 +11,10 @@ SCREEN_SIZE = BOARD_SIZE + NAV_SIZE
 SHIP_WIDTH = int(TILE_SIZE/2)
 CIRCLE_WIDTH = int(SHIP_WIDTH/2)
 SHOT_WIDTH = int(CIRCLE_WIDTH/2)
-
-# offsets
 OFFSET = TILE_SIZE/2
 TEXT_Y_OFFSET = 14
 ONE_DIGIT_X_OFFSET = 22
 TWO_DIGIT_X_OFFSET = 12.5
-
-# colors
 COLORS = [(255,102,255),(255,0,0),(0,255,255),(255, 255, 0),(255, 0, 255),(255, 153, 0),(153, 102, 255),(255, 255, 255),(255, 153, 255),(153, 102, 51)]
 BG_COLOR = (42, 42, 42)
 SHOT_COLOR = (255,0,0)
@@ -32,7 +26,6 @@ color_idx = 0
 yValues = []
 xValues = []
 
-# dummy data
 def setBoardParams(rows, cols):
     global TILES_COUNT, BOARD_SIZE, SCREEN_SIZE, yValues, xValues, color_idx
     TILES_COUNT = len(rows)
@@ -95,9 +88,6 @@ def drawStats(steps, time):
 def drawPause():
     screen.blit(textFont.render('PAUSED', False, TEXT_COLOR),(SCREEN_SIZE + 40, 360))
 
-
-
-# draw grid
 def drawGrid():
     for lineIndex in range(TILES_COUNT + 1):
         pos = lineIndex*TILE_SIZE
@@ -105,7 +95,6 @@ def drawGrid():
         pg.draw.line(screen, (255, 255, 255), (0, pos), (boardSize, pos), 1)
         pg.draw.line(screen, (255, 255, 255), (pos, 0), (pos, boardSize), 1)
     
-# draw values
 def drawValues():
     for dimension in range(2):
         for lineIndex in range(TILES_COUNT):
@@ -118,7 +107,6 @@ def drawValues():
             
             screen.blit(digitText, (xPos, yPos))
      
-# draw ship longer than 1x1
 def drawShip(start, end, line, horizontal):
     lineCoordinate = line*TILE_SIZE+OFFSET
     circleCoordinate = lineCoordinate+1
@@ -158,7 +146,6 @@ def takeShot(x, y):
     
     pg.draw.circle(screen, SHOT_COLOR, pos, SHOT_WIDTH)
 
-#init screen
 pg.init()
 screen = pg.display.set_mode((SCREEN_SIZE + 400, SCREEN_SIZE))
 screen.fill(BG_COLOR)

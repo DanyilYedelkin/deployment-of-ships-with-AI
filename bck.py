@@ -15,13 +15,10 @@ boats_pos_array = np.copy(boats_array).reshape(1, len(boats_array))
 game_array = np.stack((row_array, col_array))
 game = np.zeros((len(game_array[0])+2, len(game_array[0])+2), int)
 LEN = len(game_array[0, :])
-for boat in boats_array:
-    if(boat > LEN):
-        print("ERROR: length of the boat is more than size of the map")
 
 error = False
 
-def setBckParams(boats, rows, columns):
+def setBacktrackingParams(boats, rows, columns):
     global row_array, col_array, boats_array_in, game_array, LEN, error
     error = False
     row_array = np.array(rows)
@@ -36,9 +33,7 @@ def drawShips(array, x, y):
     global error, steps, start, end
     ans = np.copy(array[1:LEN+1, 1:LEN+1])
     horizontal = False
-
     clearScreen()
-
     for i in range(LEN):
         for j in range(LEN):
             lenght = 1
@@ -61,9 +56,7 @@ def drawShips(array, x, y):
     takeShot(x-1, y-1)
     end = time.time()
     drawStats(steps,end-start)
-    
     refreshScreen()
-
     for event in pg.event.get():
         if event.type == pg.KEYDOWN:
             if event.key == pg.K_ESCAPE:
@@ -72,59 +65,46 @@ def drawShips(array, x, y):
             running = False
             pg.quit()
 
-# function to test if boat can be at x,y possition horizontally
-def canPutHor(x, y, boat):
+
+def canPutHorizontally(x, y, boat):
     global game, game_array
-    # can boat fit ?
-    if(y-1+boat > LEN):
-        return False
-    # can boat be here ?
-    if(game_array[0, x-1]-boat < 0):
+    if(y-1+boat > LEN) or (game_array[0, x-1]-boat < 0):
         return False
     for i in range(boat):
         if(game_array[1, y-1+i]-1 < 0):
             return False
-    # does boat intersect ?
     for row in range(3):
         for col in range(0, boat+2):
             if(game[x+row-1, y+col-1] > 0):
                 return False
     return True
 
-# function to test if boat can be at x,y possition vertically
-def canPutVer(x, y, boat):
+def canPutVertically(x, y, boat):
     global game, game_array
-    # can boat fit ?
-    if(x-1+boat > LEN):
-        return False
-    # can boat be here ?
-    if(game_array[1, y-1]-boat < 0):
+    if(x-1+boat > LEN) or (game_array[1, y-1]-boat < 0):
         return False
     for i in range(boat):
         if(game_array[0, x-1+i]-1 < 0):
             return False
-    # does boat intersect ?
     for col in range(3):
         for row in range(boat+2):
             if(game[x+row-1, y+col-1] > 0):
                 return False
     return True
 
-# test if game is solved
-def solved():
+def isSolved():
     global game_array
     if(np.all(game_array == 0)):
         return True
     return False
 
-# function that returns array of possible positions for boat
 def posPositions(boat):
     posit = []
     for row in range(1, LEN+1):
         for col in range(1, LEN+1):
-            if(canPutHor(row, col, boat)):
+            if(canPutHorizontally(row, col, boat)):
                 posit.append([row, col])
-            if(canPutVer(row, col, boat) and boat > 1):
+            if(canPutVertically(row, col, boat) and boat > 1):
                 posit.append([row+LEN, col])
     return posit
 
@@ -140,10 +120,10 @@ def getLCV():
         out += len((index['pos']))
     return out
 
-# puts boat on board horizontally
-def putBoatHor(x, y, boat):
+
+def putBoatHorizontally(x, y, boat):
     global game, game_array
-    if(not canPutHor(x, y, boat)):
+    if(not canPutHorizontally(x, y, boat)):
         return False
     game_array[0, x-1] -= boat
     for i in range(boat):
@@ -153,9 +133,9 @@ def putBoatHor(x, y, boat):
     return True
 
 
-def putBoatVer(x, y, boat):
+def putBoatVertically(x, y, boat):
     global game, game_array
-    if(not canPutVer(x, y, boat)):
+    if(not canPutVertically(x, y, boat)):
         return False
     game_array[1, y-1] -= boat
     for i in range(boat):
@@ -164,21 +144,18 @@ def putBoatVer(x, y, boat):
     game[x, y] = boat+LEN
     return True
 
-# remove boat from board
 def putBoat(x, y, boat):
     global game
-    if(x > LEN):
-        putBoatVer(x % LEN, y, boat)
+    if(x <= LEN):
+        putBoatHorizontally(x, y, boat)
     else:
-        putBoatHor(x, y, boat)
+        putBoatVertically(x % LEN, y, boat)
 
 
 def boatBack(x, y):
     global game, game_array
     boat = game[x, y] % LEN
-    if(boat < 1):
-        return False
-    if(boat == 1 and (game[x-1, y] > 0 or game[x+1, y] > 0 or game[x, y-1] > 0 or game[x, y+1] > 0)):
+    if(boat < 1) or (boat == 1 and (game[x-1, y] > 0 or game[x+1, y] > 0 or game[x, y-1] > 0 or game[x, y+1] > 0)):
         return False
     if(game[x, y] > LEN):
         for i in range(boat):
@@ -193,7 +170,6 @@ def boatBack(x, y):
         game_array[0, x-1] += boat
         return addBack(boat)
 
-# removes boat from list when its placed
 def removeBoat(boat):
     global boats_array, boats_removed
     for i in range(len(boats_array)):
@@ -203,7 +179,6 @@ def removeBoat(boat):
             return boat
     return -1
 
-# adding back boat to the boat_array
 def addBack(boat):
     global boats_array, boats_removed
     for i in range(len(boats_removed)):
@@ -217,7 +192,7 @@ def addBack(boat):
 def tryPutBoat(x, y, boats_array):
     global game, game_array
     for boat in boats_array:
-        if(putBoatHor(x, y, boat) or putBoatVer(x, y, boat)):
+        if(putBoatHorizontally(x, y, boat) or putBoatVertically(x, y, boat)):
             return removeBoat(boat)
     return False
 
@@ -255,7 +230,6 @@ def sortLCV(pos_boats_pos):
     dummy_boats_array = np.copy(boats_array)
     dummy_boats_removed = np.copy(boats_removed)
     retryData()
-
     for index in pos_boats_pos:
         array = index['pos']
         boat = index['boat']
@@ -282,18 +256,16 @@ solved_game = np.copy(game)
 last_solved = np.zeros((len(game_array[0])+2, len(game_array[0])+2), int)
 
 
-def bckAdvanced(index, pos_boats_pos):
+def backtrackAlgorithm(index, pos_boats_pos):
     global steps, solved_game, last_solved
     if error:
         return -1
-    if(solved()):
-        print("the task is solved")
+    if(isSolved()):
         if(not np.array_equal(game, last_solved)):
             last_solved = np.copy(game)
-        return solved()
+        return isSolved()
     if(index >= len(boats_array)):
-        print("end of the boats")
-        return solved()
+        return isSolved()
     a = index+1
     current_boat = pos_boats_pos[index]['boat']
     for pos in pos_boats_pos[index]['pos']:
@@ -303,54 +275,49 @@ def bckAdvanced(index, pos_boats_pos):
             continue
         drawShips(game, pos[1], pos[0] % LEN)
         if(pos[0] > LEN):
-            if(putBoatVer(pos[0]-LEN, pos[1], current_boat)):
+            if(putBoatVertically(pos[0]-LEN, pos[1], current_boat)):
                 steps+=1
-                bckAdvanced(a, pos_boats_pos)
-                if(solved()):
-                    return solved()
+                backtrackAlgorithm(a, pos_boats_pos)
+                if(isSolved()):
+                    return isSolved()
                 boatBack(pos[0]-LEN, pos[1])
         else:
-            if(putBoatHor(pos[0], pos[1], current_boat)):
+            if(putBoatHorizontally(pos[0], pos[1], current_boat)):
                 steps+=1
-                bckAdvanced(a, pos_boats_pos)
+                backtrackAlgorithm(a, pos_boats_pos)
 
-                if(solved()):
+                if(isSolved()):
                     drawShips(game, pos[1], pos[0] % LEN)
-                    return solved()
+                    return isSolved()
                 boatBack(pos[0], pos[1])     
         print(steps,end - start)
-    return solved()
+    return isSolved()
 
 
 def backtrackMRV():
     global steps,start
     start = time.time()
     steps = 0
-    return bckAdvanced(0, MRV(boats_array))
+    return backtrackAlgorithm(0, MRV(boats_array))
 
 def backtrackLCV():
     global steps,start
     steps = 0
-    pos= sortLCV(MRV(boats_array))
+    pos = sortLCV(MRV(boats_array))
     start = time.time()
-    return bckAdvanced(0,pos )
+    return backtrackAlgorithm(0,pos )
 
-def frwMRV(index):
+def logicForwardMRV(index):
     global steps, last_solved, solved_game, boats_array
     pos_boats_pos = MRV(boats_array)
-
     if error:
         return -1
-    if(solved()):
-        print("the task is solved")
+    if(isSolved()):
         if(not np.array_equal(game, last_solved)):
             last_solved = np.copy(game)
-        return solved()
-
+        return isSolved()
     if(index >= len(boats_array)):
-        print("end of the boats")
-        return solved()
-
+        return isSolved()
     a = index+1
     for pos in pos_boats_pos[index]['pos']:
         if error:
@@ -358,71 +325,67 @@ def frwMRV(index):
         current_boat = pos_boats_pos[index]['boat']
         steps+=1
         if(pos[0] > LEN):
-            if(putBoatVer(pos[0]-LEN, pos[1], current_boat)):
+            if(putBoatVertically(pos[0]-LEN, pos[1], current_boat)):
                 drawShips(game, pos[1], pos[0]-LEN)
                 steps+=1
-                frwMRV(a)
-                if(solved()):
-                    return solved()
+                logicForwardMRV(a)
+                if(isSolved()):
+                    return isSolved()
                 boatBack(pos[0]-LEN, pos[1])
         else:
-            if(putBoatHor(pos[0], pos[1], current_boat)):
+            if(putBoatHorizontally(pos[0], pos[1], current_boat)):
                 drawShips(game, pos[1], pos[0])
                 steps+=1
-                frwMRV(a)
-                if(solved()):
-                    return solved()
+                logicForwardMRV(a)
+                if(isSolved()):
+                    return isSolved()
                 boatBack(pos[0], pos[1])
         print(steps,end - start)
-    return solved()
+    return isSolved()
 
-def frwLCV(index):
+def logicForwardLCV(index):
     global steps, solved_game, boats_array, last_solved
     pos_boats_pos = sortLCV(MRV(boats_array))
     if error:
         return -1
-    if(solved()):
-        print("the task is solved")
+    if(isSolved()):
         if(not np.array_equal(game, last_solved)):
             last_solved = np.copy(game)
-        return solved()
-
+        return isSolved()
     if(index >= len(boats_array)):
-        print("end of the boats")
-        return solved()
-
+        return isSolved()
     a = index+1
     for pos in pos_boats_pos[index]['pos']:
         if error:
             return -1
         current_boat = pos_boats_pos[index]['boat']
         if(pos[0] > LEN):
-            if(putBoatVer(pos[0]-LEN, pos[1], current_boat)):
+            if(putBoatVertically(pos[0]-LEN, pos[1], current_boat)):
                 drawShips(game, pos[1], pos[0]-LEN)
                 steps+=1
-                frwLCV(a)
-                if(solved()):
-                    return solved()
+                logicForwardLCV(a)
+                if(isSolved()):
+                    return isSolved()
                 boatBack(pos[0]-LEN, pos[1])
         else:
-            if(putBoatHor(pos[0], pos[1], current_boat)):
+            if(putBoatHorizontally(pos[0], pos[1], current_boat)):
                 drawShips(game, pos[1], pos[0])
                 steps+=1
-                frwLCV(a)
-                if(solved()):
-                    return solved()
+                logicForwardLCV(a)
+                if(isSolved()):
+                    return isSolved()
                 boatBack(pos[0], pos[1])
         print(steps,end - start)
-    return solved()
+    return isSolved()
                 
 def forwardMRV():
-   global steps,start
+   global steps, start
    start = time.time()
    steps = 0
-   return frwMRV(0)
+   return logicForwardMRV(0)
 
 def forwardLCV():
-    global steps,start
+    global steps, start
     start = time.time()
     steps = 0
-    return frwLCV(0)
+    return logicForwardLCV(0)
